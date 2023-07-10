@@ -16,10 +16,10 @@ type InventoryServer struct {
 	db *sql.DB
 }
 
-func (s *InventoryServer) AllocateInventoryItemQuantity(ctx context.Context, r *pb.AllocateQuantityRequest) (*pb.AllocationResponse, error) {
+func (s *InventoryServer) AllocateItemQuantity(ctx context.Context, r *pb.AllocateQuantityRequest) (*pb.AllocationResponse, error) {
 	if err := invdb.AllocateInventoryItemAmount(s.db, int64(r.ItemId), int64(r.Count)); err != nil {
 		msg := err.Error()
-		return &pb.AllocationResponse{Ok: false, Message: &msg}, err
+		return &pb.AllocationResponse{Ok: false, Message: &msg}, nil
 	} else {
 		return &pb.AllocationResponse{Ok: true}, nil
 	}
@@ -32,7 +32,7 @@ func Serve(db *sql.DB, bind string) {
 	}
 	grpcServer := grpc.NewServer()
 	inventoryServer := InventoryServer{db: db}
-	pb.RegisterInventoryServiceServer(grpcServer, inventoryServer)
+	pb.RegisterInventoryServiceServer(grpcServer, &inventoryServer)
 	log.Printf("gRPC server listening on: %v...\n", bind)
 	if err := grpcServer.Serve(listener); err != nil {
 		log.Fatalf("gRPC server error: %v\n", err)

@@ -96,6 +96,7 @@ func AllocateInventoryItemAmount(db *sql.DB, itemId, amount int64) error {
 	}
 	// Defers a rollback in case something goes wrong
 	defer tx.Rollback()
+	log.Println("Fetching inventory item...")
 	item, err := fetchInventoryItem(tx, itemId)
 	if err != nil {
 		log.Println(err)
@@ -103,8 +104,9 @@ func AllocateInventoryItemAmount(db *sql.DB, itemId, amount int64) error {
 	}
 	enoughStock := (item.Stock - item.Allocated) >= amount
 	enoughAllocated := item.Allocated >= amount
-	if enoughStock && enoughAllocated {
+	if (enoughStock && amount >= 0) || (enoughAllocated && amount <= 0) {
 		// Execute the update
+		log.Println("Updating allocated quantities...")
 		_, err = tx.Exec(`
 			UPDATE inventory_item
 			SET allocated = allocated + ?
