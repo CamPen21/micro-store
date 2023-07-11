@@ -115,19 +115,21 @@ func AddOrderItems(tx *sql.Tx, orderId int64, orderItems []*OrderedItem) error {
 	orderItemsLen := len(orderItems)
 	inserts := make([]string, orderItemsLen)
 	values := make([]interface{}, orderItemsLen*3)
-	for i := 0; i < len(inserts); i++ {
-		if i == len(inserts)-1 {
-			inserts[i] = "VALUES(?, ?, ?);"
+	for i := 0; i < orderItemsLen; i++ {
+		if i == orderItemsLen-1 {
+			inserts[i] = "(?, ?, ?)\n"
 		} else {
-			inserts[i] = "VALUES(?, ?, ?),\n"
+			inserts[i] = "(?, ?, ?),\n"
 		}
-		values[i] = orderId
-		values[i+1] = orderItems[i].ItemId
-		values[i+2] = orderItems[i].Quantity
+		valuesIndex := i * 3
+		values[valuesIndex] = orderId
+		values[valuesIndex+1] = orderItems[i].ItemId
+		values[valuesIndex+2] = orderItems[i].Quantity
 
 	}
 	valuesSection := strings.Join(inserts, "")
-	_, err := tx.Exec("INSERT INTO order_item(order_id, item_id, quantity)\n"+valuesSection, values...)
+	log.Println(values)
+	_, err := tx.Exec("INSERT INTO order_item(order_id, item_id, quantity)\nVALUES"+valuesSection+";", values...)
 	if err != nil {
 		log.Println(err)
 		return err
