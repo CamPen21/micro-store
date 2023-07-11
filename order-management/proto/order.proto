@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+option go_package="micro-store/order-management/proto";
+
+// Messages
+
+message OrderItem {
+    int32 itemId = 1;
+    int32 quantity = 2;
+}
+
+// Requests
+
+message PlaceOrderRequest { repeated OrderItem order_items = 1; }
+message CancelOrderRequest { int32 order_id = 1;}
+
+// Responses
+
+message OrderPlacementResponse { bool success = 1; int32 order_id = 2;  }
+
+// Server
+
+service OrderManagementService {
+    rpc PlaceOrder(PlaceOrderRequest) returns (OrderPlacementResponse){}
+    rpc CancelOrder(CancelOrderRequest) returns (OrderPlacementResponse){}
+}
