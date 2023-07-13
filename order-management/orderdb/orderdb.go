@@ -3,7 +3,6 @@ package orderdb
 import (
 	"database/sql"
 	"log"
-	"strings"
 	"time"
 
 	"github.com/mattn/go-sqlite3"
@@ -112,27 +111,15 @@ func CreateOrder(tx *sql.Tx, orderedItems []*OrderedItem) (int64, error) {
 }
 
 func AddOrderItems(tx *sql.Tx, orderId int64, orderItems []*OrderedItem) error {
-	orderItemsLen := len(orderItems)
-	inserts := make([]string, orderItemsLen)
-	values := make([]interface{}, orderItemsLen*3)
-	for i := 0; i < orderItemsLen; i++ {
-		if i == orderItemsLen-1 {
-			inserts[i] = "(?, ?, ?)\n"
-		} else {
-			inserts[i] = "(?, ?, ?),\n"
+	for _, item := range orderItems {
+		_, err := tx.Exec(`
+			INSERT INTO order_item(order_id, item_id, quantity) 
+			VALUES (?, ?,?);
+		`, orderId, item.ItemId, item.Quantity)
+		if err != nil {
+			log.Println(err)
+			return err
 		}
-		valuesIndex := i * 3
-		values[valuesIndex] = orderId
-		values[valuesIndex+1] = orderItems[i].ItemId
-		values[valuesIndex+2] = orderItems[i].Quantity
-
-	}
-	valuesSection := strings.Join(inserts, "")
-	log.Println(values)
-	_, err := tx.Exec("INSERT INTO order_item(order_id, item_id, quantity)\nVALUES"+valuesSection+";", values...)
-	if err != nil {
-		log.Println(err)
-		return err
 	}
 	return nil
 }

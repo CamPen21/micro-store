@@ -3,7 +3,9 @@ package grpcapi
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"log"
+	"micro-store/order-management/grpcclient"
 	"micro-store/order-management/orderdb"
 	pb "micro-store/order-management/proto"
 	"net"
@@ -17,7 +19,8 @@ func orderedItemFromPbOrderItem(item *pb.OrderItem) *orderdb.OrderedItem {
 
 type OrderManagementService struct {
 	pb.UnimplementedOrderManagementServiceServer
-	db *sql.DB
+	db     *sql.DB
+	client pb.InventoryServiceClient
 }
 
 func (s *OrderManagementService) PlaceOrder(ctx context.Context, r *pb.PlaceOrderRequest) (*pb.OrderPlacementResponse, error) {
@@ -30,6 +33,16 @@ func (s *OrderManagementService) PlaceOrder(ctx context.Context, r *pb.PlaceOrde
 	orderedItems := make([]*orderdb.OrderedItem, 0)
 	for _, pbItem := range r.OrderItems {
 		orderedItems = append(orderedItems, orderedItemFromPbOrderItem(pbItem))
+	}
+	for _, item := range orderedItems {
+		res, err := grpcclient.AllocateItemQuantity(s.client, item.ItemId, item.Quantity)
+		if err != nil {
+			log.Println(err)
+			return nil, err
+		}
+		if !res.Ok {
+			return nil, errors.New(*res.Message)
+		}
 	}
 	if orderId, err := orderdb.CreateOrder(tx, orderedItems); err != nil {
 		return &pb.OrderPlacementResponse{Success: false, OrderId: -1}, err
@@ -52,13 +65,13 @@ func (s *OrderManagementService) CancelOrder(ctx context.Context, r *pb.CancelOr
 	}
 }
 
-func Serve(db *sql.DB, bind string) {
+func Serve(db *sql.DB, bind string, client pb.InventoryServiceClient) {
 	listener, err := net.Listen("tcp", bind)
 	if err != nil {
 		log.Fatalf("gRPC server error: Failure to bind %v\n", bind)
 	}
 	grpcServer := grpc.NewServer()
-	inventoryServer := OrderManagementService{db: db}
+	inventoryServer := OrderManagementService{db: db, client: client}
 	pb.RegisterOrderManagementServiceServer(grpcServer, &inventoryServer)
 	log.Printf("gRPC server listening on: %v...\n", bind)
 	if err := grpcServer.Serve(listener); err != nil {
