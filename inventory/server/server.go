@@ -21,7 +21,7 @@ func main() {
 		args.DbPath = "./inventory.db"
 	}
 	if args.BindGrcp == "" {
-		args.BindGrcp = ":8081"
+		args.BindGrcp = ":3000"
 	}
 	db, err := sql.Open("sqlite3", args.DbPath)
 	if err != nil {
