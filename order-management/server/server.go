@@ -47,6 +47,7 @@ func main() {
 			clientErr := err.Error()
 			log.Fatalf("Couldn't connect to inventory: %v", clientErr)
 		}
+		defer conn.Close()
 		client := pb.NewInventoryServiceClient(conn)
 		log.Println("Starting gRPC server...")
 		grpcapi.Serve(db, args.BindGrcp, client)
