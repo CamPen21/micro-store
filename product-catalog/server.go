@@ -2,7 +2,7 @@ package main
 
 import (
 	"log"
-	"micro-store/product-catalog/graph"
+	"micro-store/product-catalog/resolver"
 	"net/http"
 	"os"
 
@@ -17,7 +17,7 @@ func main() {
 		port = defaultPort
 	}
 
-	srv := handler.NewDefaultServer(graph.NewExecutableSchema(graph.Config{Resolvers: &graph.Resolver{}}))
+	srv := handler.NewDefaultServer(.NewExecutableSchema(.Config{Resolvers: &resolver.Resolver{}}))
 
     // http.Handle("/", playground.Handler("GraphQL playground", "/query"))
 	http.Handle("/query", srv)
