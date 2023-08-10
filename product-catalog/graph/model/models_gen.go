@@ -7,11 +7,6 @@ type AddProductStock struct {
 	Quantity int    `json:"quantity"`
 }
 
-type CartItem struct {
-	Product  *Product `json:"product"`
-	Quantity int      `json:"quantity"`
-}
-
 type NewProduct struct {
 	Name        string  `json:"name"`
 	Description string  `json:"description"`
@@ -23,9 +18,4 @@ type Product struct {
 	Name        string  `json:"name"`
 	Description string  `json:"description"`
 	Price       float64 `json:"price"`
-}
-
-type ShoppingCart struct {
-	ID    string      `json:"id"`
-	Items []*CartItem `json:"items"`
 }

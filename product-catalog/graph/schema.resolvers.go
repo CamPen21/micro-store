@@ -11,31 +11,31 @@ import (
 
 // CreateProduct is the resolver for the createProduct field.
 func (r *mutationResolver) CreateProduct(ctx context.Context, product model.NewProduct) (*model.Product, error) {
-    p := model.Product{
-        ID: "ID",
-        Name: "Product",
-        Description: "None",
-        Price: 10.0,
-    }
-    return &p, nil
+	p := model.Product{
+		ID:          "ID",
+		Name:        "Product",
+		Description: "None",
+		Price:       10.0,
+	}
+	return &p, nil
 }
 
 // AddProductStock is the resolver for the addProductStock field.
 func (r *mutationResolver) AddProductStock(ctx context.Context, input model.AddProductStock) (bool, error) {
-    return true, nil
+	return true, nil
 }
 
 // Products is the resolver for the products field.
 func (r *queryResolver) Products(ctx context.Context) ([]*model.Product, error) {
-    arr := make([]*model.Product, 0)
-    p := model.Product{
-        ID: "ID",
-        Name: "Product",
-        Description: "None",
-        Price: 10.0,
-    }
-    arr = append(arr, &p)
-    return arr, nil
+	arr := make([]*model.Product, 0)
+	p := model.Product{
+		ID:          "ID",
+		Name:        "Product",
+		Description: "None",
+		Price:       10.0,
+	}
+	arr = append(arr, &p)
+	return arr, nil
 }
 
 // Mutation returns MutationResolver implementation.
