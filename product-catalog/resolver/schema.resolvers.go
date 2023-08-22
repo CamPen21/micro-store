@@ -6,24 +6,40 @@ package resolver
 
 import (
 	"context"
-	"fmt"
+	"errors"
 	"micro-store/product-catalog/generated"
 	"micro-store/product-catalog/models"
+
+	"github.com/google/uuid"
 )
+
+var productsList = []*models.Product{}
 
 // CreateProduct is the resolver for the createProduct field.
 func (r *mutationResolver) CreateProduct(ctx context.Context, product models.NewProduct) (*models.Product, error) {
-	panic(fmt.Errorf("not implemented: CreateProduct - createProduct"))
-}
-
-// AddProductStock is the resolver for the addProductStock field.
-func (r *mutationResolver) AddProductStock(ctx context.Context, input models.AddProductStock) (bool, error) {
-	panic(fmt.Errorf("not implemented: AddProductStock - addProductStock"))
+    prod := &models.Product{
+        ID: uuid.New().String(),
+        Name: product.Name,
+        Description: product.Description,
+        Price: product.Price,
+    }
+    productsList = append(productsList, prod)
+    return prod, nil
 }
 
 // Products is the resolver for the products field.
 func (r *queryResolver) Products(ctx context.Context) ([]*models.Product, error) {
-	panic(fmt.Errorf("not implemented: Products - products"))
+    return productsList, nil
+}
+
+// Product is the resolver for the product field.
+func (r *queryResolver) Product(ctx context.Context, id string) (*models.Product, error) {
+    for _, product := range(productsList) {
+        if product.ID == id {
+            return product, nil
+        }
+    }
+    return nil, errors.New("Id didn't match any product")
 }
 
 // Mutation returns generated.MutationResolver implementation.

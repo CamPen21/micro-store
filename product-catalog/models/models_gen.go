@@ -2,13 +2,3 @@
 
 package models
 
-type AddProductStock struct {
-	ID       string `json:"id"`
-	Quantity int    `json:"quantity"`
-}
-
-type NewProduct struct {
-	Name        string  `json:"name"`
-	Description string  `json:"description"`
-	Price       float64 `json:"price"`
-}

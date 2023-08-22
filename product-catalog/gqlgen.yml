@@ -33,6 +33,10 @@ autobind:
 # modelgen, the others will be allowed when binding to fields. Configure them to
 # your liking
 models:
+  Product:
+    model: micro-store/product-catalog/models.Product
+  NewProduct:
+    model: micro-store/product-catalog/models.NewProduct
   ID:
     model:
       - github.com/99designs/gqlgen/graphql.ID

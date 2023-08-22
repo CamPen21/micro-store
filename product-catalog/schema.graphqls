@@ -9,8 +9,10 @@ type Product {
   price: Float!
 }
 
+# TODO: Search feature
 type Query {
   products: [Product!]!
+  product(id: ID!): Product
 }
 
 input NewProduct {
@@ -19,13 +21,7 @@ input NewProduct {
   price: Float!
 }
 
-input AddProductStock {
-  id: ID!
-  quantity: Int!
-}
-
 type Mutation {
   createProduct(product: NewProduct!): Product!
-  addProductStock(input: AddProductStock!): Boolean!
 }
 
