@@ -8,22 +8,16 @@ Mini project of a small store system implementing three microservices:
 
 ## Product Catalog
 
-This service takes care of listing the products, and searching them
+This service handles the products details, from price to description. 
 
-**Features:**
+Product lifecycle starts here, by adding a product to the catalog it's unique ID gets generated.
 
-- Should have a list of available products
-- Should allow to search for a product
+After that this ID gets used to increase and manipulate inventory through the following service.
 
 ## Inventory management
 
-This service takes care of inventory
-
-**Features:**
-
-- Should allow to check inventory availability
-- Should allow to update inventory
-- Should allow to add or remove a product
+This service handles the product inventory, enables an interface to allocate or deallocate a quantity of items
+by product.
 
 ## Order management
 
@@ -31,9 +25,18 @@ The Order Management Microservice will handle the overall process of managing cu
 This includes operations such as creating an order, 
 retrieving order details, updating an order status, or deleting an order.
 
-**Features:**
+# Process Flow
 
-- Should allow to place an order
-- Should allow to fetch order details
-- Should allow to update order status
-- Should allow to cancel an order
+A common flow of how things should work.
+
+```mermaid
+sequenceDiagram
+Admin ->> Catalog: Add product
+Catalog ->> Inventory: Set quantity to zero
+User ->> Catalog: List Products
+User ->> Catalog: Get Product Details
+User ->> OrderMng: Create Order
+OrderMng ->> Inventory: Allocate Units
+Inventory ->> OrderMng: Confirm allocation
+OrderMng ->> User: Create and return order
+```
