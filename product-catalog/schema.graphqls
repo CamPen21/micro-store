@@ -1,0 +1,27 @@
+# GraphQL schema example
+#
+# https://gqlgen.com/getting-started/
+
+type Product {
+  id: ID!
+  name: String!
+  description: String!
+  price: Float!
+}
+
+# TODO: Search feature
+type Query {
+  products: [Product!]!
+  product(id: ID!): Product
+}
+
+input NewProduct {
+  name: String!
+  description: String!
+  price: Float!
+}
+
+type Mutation {
+  createProduct(product: NewProduct!): Product!
+}
+

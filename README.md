@@ -27,7 +27,9 @@ This service takes care of inventory
 
 ## Order management
 
-The Order Management Microservice will handle the overall process of managing customer orders. This includes operations such as creating an order, retrieving order details, updating an order status, or deleting an order.
+The Order Management Microservice will handle the overall process of managing customer orders. 
+This includes operations such as creating an order, 
+retrieving order details, updating an order status, or deleting an order.
 
 **Features:**
 
